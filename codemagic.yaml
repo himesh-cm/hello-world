@@ -10,12 +10,6 @@ workflows:
       node: 18.10.0     # Define default, latest, current, lts, carbon (or another stream), nightly or version
       npm: 8.11.0       # Define default, latest, next, lts or version
       ndk: default         # Define default or revision (e.g., r19c)         # Gradle cache
-    triggering:
-      events:
-        - push
-      branch_patterns:              # Include or exclude watched branches
-        - pattern: 'DEV'
-          include: true
     scripts:      
       - name: Install npm dependencies for Ionic project
         script: |
@@ -37,27 +31,13 @@ workflows:
           keyPassword=$CM_KEY_PASSWORD
           keyAlias=$CM_KEY_ALIAS
           storeFile=$CM_KEYSTORE_PATH
-          EOF    
+          EOF
       - name: Update dependencies and copy web assets to native project
         script: |
-          npx cap copy # <- use this is you don't need to update native dependencies
-          # npx cap sync # <- update native dependencies and copy web assets to native project       
+          npx cap copy
       - name: Build Android release
         script: |           
-          LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$DEV_PACKAGE_ID" --track 'internal')
-          if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]
-            then
-              # fallback in case no build number was found from Google Play.
-              # Alternatively, you can `exit 1` to fail the build
-              # BUILD_NUMBER is a Codemagic built-in variable tracking the number of
-              # times this workflow has been built
-              UPDATED_BUILD_NUMBER=$BUILD_NUMBER
-            else
-              UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
-          fi
-          cd android
-          chmod +x ./gradlew
-          ./gradlew bundleRelease -PversionCode=$UPDATED_BUILD_NUMBER -PversionName=1.0.$UPDATED_BUILD_NUMBER
+          ./gradlew bundleRelease
     artifacts:
       - android/app/build/outputs/**/*.aab
       - android/app/build/outputs/**/*.apk
