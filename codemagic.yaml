@@ -32,6 +32,9 @@ workflows:
           keyAlias=$CM_KEY_ALIAS
           storeFile=$CM_KEYSTORE_PATH
           EOF
+      - name: build www folder
+        script: |
+          ionic build    
       - name: Update dependencies and copy web assets to native project
         script: |
           npx cap sync
