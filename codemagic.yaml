@@ -37,7 +37,7 @@ workflows:
           ionic build    
       - name: Update dependencies and copy web assets to native project
         script: |
-          npx cap sync
+          npx cap copy
       - name: Build Android release
         script: |  
           cd android         
