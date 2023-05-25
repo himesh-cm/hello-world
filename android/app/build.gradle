@@ -20,11 +20,13 @@ android {
     signingConfigs {
           release {
               if (System.getenv()["CI"]) { // CI=true is exported by Codemagic
+                  println 'DEBUG::: running CI block'
                   storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
                   storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
                   keyAlias System.getenv()["CM_KEY_ALIAS"]
                   keyPassword System.getenv()["CM_KEY_PASSWORD"]
               } else {
+                  println 'DEBUG::: running else block'
                   keyAlias keystoreProperties['keyAlias']
                   keyPassword keystoreProperties['keyPassword']
                   storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
